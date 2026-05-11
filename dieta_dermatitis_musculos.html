@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Nutricional - Dermatitis Seborreica + Masa Muscular</title>
+<meta name="description" content="Plan nutricional para dermatitis seborreica y ganancia muscular">
+<meta name="theme-color" content="#2d6a4f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Mi Dieta">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #2d3748; }
+  header {
+    background: linear-gradient(135deg, #2d6a4f, #40916c);
+    color: white; padding: 28px 24px; text-align: center;
+  }
+  header h1 { font-size: 1.5rem; font-weight: 700; }
+  header p { font-size: 0.9rem; opacity: 0.85; margin-top: 6px; }
+  .tabs { display: flex; background: #fff; border-bottom: 2px solid #e2e8f0; overflow-x: auto; }
+  .tab { padding: 14px 20px; cursor: pointer; font-size: 0.85rem; font-weight: 600;
+    color: #718096; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s; }
+  .tab.active { color: #2d6a4f; border-bottom-color: #2d6a4f; }
+  .tab:hover { color: #40916c; }
+  .content { display: none; padding: 20px; max-width: 860px; margin: 0 auto; }
+  .content.active { display: block; }
+
+  .card { background: white; border-radius: 12px; padding: 18px; margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+  .card h2 { font-size: 1rem; font-weight: 700; color: #2d6a4f; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+  .badge-green { background: #d8f3dc; color: #1b4332; }
+  .badge-red { background: #ffe0e0; color: #7b1d1d; }
+  .badge-yellow { background: #fff9c4; color: #7b6000; }
+  .badge-blue { background: #dbeafe; color: #1e3a8a; }
+
+  .meal { border-left: 4px solid #40916c; padding: 10px 14px; margin-bottom: 10px;
+    background: #f8fffe; border-radius: 0 8px 8px 0; }
+  .meal h3 { font-size: 0.85rem; font-weight: 700; color: #1b4332; }
+  .meal p { font-size: 0.82rem; color: #4a5568; margin-top: 4px; line-height: 1.5; }
+  .meal .macros { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+
+  .food-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .food-item { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;
+    padding: 10px; text-align: center; font-size: 0.8rem; }
+  .food-item .icon { font-size: 1.6rem; }
+  .food-item .name { font-weight: 600; color: #1b4332; margin-top: 4px; }
+  .food-item .desc { color: #6b7280; font-size: 0.73rem; margin-top: 2px; }
+
+  .avoid-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .avoid-item { background: #fff5f5; border: 1px solid #fca5a5; border-radius: 8px;
+    padding: 10px; text-align: center; font-size: 0.8rem; }
+  .avoid-item .icon { font-size: 1.6rem; }
+  .avoid-item .name { font-weight: 600; color: #7b1d1d; margin-top: 4px; }
+
+  .tip { background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 0 8px 8px 0;
+    padding: 12px 14px; margin-bottom: 10px; font-size: 0.83rem; color: #78350f; line-height: 1.5; }
+  .tip strong { display: block; margin-bottom: 3px; }
+
+  .macros-bar { margin-bottom: 10px; }
+  .macros-bar label { font-size: 0.8rem; font-weight: 600; color: #4a5568; display: flex; justify-content: space-between; }
+  .bar { height: 8px; background: #e2e8f0; border-radius: 4px; margin-top: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+
+  .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .summary-item { background: #f0fdf4; border-radius: 10px; padding: 14px; text-align: center; }
+  .summary-item .value { font-size: 1.4rem; font-weight: 800; color: #2d6a4f; }
+  .summary-item .label { font-size: 0.75rem; color: #6b7280; margin-top: 2px; }
+
+  @media (min-width: 600px) {
+    .summary-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🌿 Plan Nutricional Personalizado</h1>
+  <p>Dermatitis Seborreica · Ectomorfo · Ganancia muscular · Gym</p>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="show('resumen')">📊 Resumen</div>
+  <div class="tab" onclick="show('menu')">🍽️ Menú Diario</div>
+  <div class="tab" onclick="show('alimentos')">✅ Alimentos OK</div>
+  <div class="tab" onclick="show('evitar')">❌ Evitar</div>
+  <div class="tab" onclick="show('consejos')">💡 Consejos</div>
+</div>
+
+<!-- RESUMEN -->
+<div id="resumen" class="content active">
+  <div class="card">
+    <h2>🎯 Tu objetivo calórico estimado</h2>
+    <p style="font-size:0.83rem;color:#4a5568;margin-bottom:14px;">
+      Como ectomorfo que entrena, necesitas un superávit calórico <strong>limpio</strong>. 
+      Esto es totalmente compatible con controlar la dermatitis seborreica.
+    </p>
+    <div class="summary-grid">
+      <div class="summary-item"><div class="value">~2800</div><div class="label">Calorías/día</div></div>
+      <div class="summary-item"><div class="value">160g</div><div class="label">Proteína</div></div>
+      <div class="summary-item"><div class="value">350g</div><div class="label">Carbohidratos</div></div>
+      <div class="summary-item"><div class="value">75g</div><div class="label">Grasas saludables</div></div>
+    </div>
+    <p style="font-size:0.75rem;color:#9ca3af;margin-top:12px;">* Ajusta según tu peso exacto y respuesta. Consulta a un nutricionista.</p>
+  </div>
+
+  <div class="card">
+    <h2>📈 Distribución de macros</h2>
+    <div class="macros-bar">
+      <label><span>Proteínas</span><span>23%</span></label>
+      <div class="bar"><div class="bar-fill" style="width:23%;background:#40916c;"></div></div>
+    </div>
+    <div class="macros-bar">
+      <label><span>Carbohidratos</span><span>50%</span></label>
+      <div class="bar"><div class="bar-fill" style="width:50%;background:#3b82f6;"></div></div>
+    </div>
+    <div class="macros-bar">
+      <label><span>Grasas saludables</span><span>27%</span></label>
+      <div class="bar"><div class="bar-fill" style="width:27%;background:#f59e0b;"></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>💚 ¿Puedes comer sano SIN empeorar la dermatitis?</h2>
+    <div class="tip">
+      <strong>✅ ¡SÍ, absolutamente!</strong>
+      La clave es elegir <strong>grasas antiinflamatorias</strong> (omega-3, aguacate, frutos secos) 
+      en lugar de grasas saturadas y trans. Las calorías limpias de carbohidratos complejos, 
+      proteínas magras y grasas buenas te ayudarán a ganar músculo <em>y</em> reducir la inflamación 
+      que agrava la dermatitis seborreica.
+    </div>
+    <div class="tip" style="background:#e0f2fe;border-color:#0284c7;color:#0c4a6e;">
+      <strong>🔬 Dermatitis + dieta:</strong>
+      El azúcar refinada, el gluten en exceso, el alcohol y los lácteos pueden inflamar 
+      más la piel. Una dieta antiinflamatoria rica en zinc, vitaminas B y omega-3 
+      puede ayudar a controlar los brotes.
+    </div>
+  </div>
+</div>
+
+<!-- MENÚ DIARIO -->
+<div id="menu" class="content">
+  <div class="card">
+    <h2>🍳 Desayuno (7:00 am) <span class="badge badge-blue">~600 kcal</span></h2>
+    <div class="meal">
+      <h3>Opción A — Pre-entreno</h3>
+      <p>🥣 Avena cocida (80g) con leche de almendras + 1 banana + 1 cda de mantequilla de maní natural<br>
+         🥚 3 huevos revueltos con espinaca y cúrcuma<br>
+         🍵 Té verde sin azúcar</p>
+      <div class="macros">
+        <span class="badge badge-green">P: 32g</span>
+        <span class="badge badge-blue">C: 70g</span>
+        <span class="badge badge-yellow">G: 18g</span>
+      </div>
+    </div>
+    <div class="meal">
+      <h3>Opción B</h3>
+      <p>🍠 2 tostadas de pan integral + aguacate + 2 huevos pasados por agua<br>
+         🫐 1 taza de frutas del bosque (arándanos, fresas)<br>
+         💧 Agua con limón</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🍎 Snack Mañana (10:00 am) <span class="badge badge-blue">~300 kcal</span></h2>
+    <div class="meal">
+      <h3>Snack anti-inflamatorio</h3>
+      <p>🥜 30g de nueces mixtas (nueces, almendras, semillas de calabaza)<br>
+         🍌 1 fruta (manzana, pera o plátano)<br>
+         💧 Agua o infusión</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🍗 Almuerzo (1:00 pm) <span class="badge badge-blue">~750 kcal</span></h2>
+    <div class="meal">
+      <h3>Opción A</h3>
+      <p>🍗 150g pechuga de pollo a la plancha con limón y hierbas<br>
+         🍚 1 taza arroz integral o quinoa<br>
+         🥦 Ensalada grande: brócoli, zanahoria, pepino, aceite de oliva<br>
+         🫚 1 cda aceite de oliva extra virgen</p>
+      <div class="macros">
+        <span class="badge badge-green">P: 45g</span>
+        <span class="badge badge-blue">C: 85g</span>
+        <span class="badge badge-yellow">G: 20g</span>
+      </div>
+    </div>
+    <div class="meal">
+      <h3>Opción B</h3>
+      <p>🐟 150g salmón al horno con limón + hierbas<br>
+         🍠 Camote/batata asada<br>
+         🥗 Ensalada verde con pepitas de girasol</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>💪 Post-Entreno (4:00–5:00 pm) <span class="badge badge-blue">~400 kcal</span></h2>
+    <div class="meal">
+      <h3>Ventana anabólica (dentro de 45 min)</h3>
+      <p>🥤 Batido: 1 banana + leche de avena + 30g proteína de suero (whey aislado, bajo en azúcar)<br>
+         — ó —<br>
+         🍳 2–3 huevos + 1 banana si no usas suplementos</p>
+      <div class="macros">
+        <span class="badge badge-green">P: 35g</span>
+        <span class="badge badge-blue">C: 50g</span>
+        <span class="badge badge-yellow">G: 5g</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🍽️ Cena (7:00–8:00 pm) <span class="badge badge-blue">~600 kcal</span></h2>
+    <div class="meal">
+      <h3>Opción A</h3>
+      <p>🐟 Sardinas o atún en agua + puré de camote<br>
+         🥗 Ensalada de rúcula, zanahoria rallada, aceite de linaza<br>
+         🍋 Jugo de limón como aderezo</p>
+    </div>
+    <div class="meal">
+      <h3>Opción B</h3>
+      <p>🫘 Guiso de legumbres (lentejas o garbanzos) con verduras y cúrcuma<br>
+         🥙 Pan integral tostado<br>
+         🥑 ½ aguacate</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🌙 Snack Noche (opcional) <span class="badge badge-blue">~200 kcal</span></h2>
+    <div class="meal">
+      <h3>Para ectomorfos (ayuda a no catabolizar)</h3>
+      <p>🥄 1 taza de yogur de coco o almendras (sin azúcar) + semillas de chía<br>
+         — ó —<br>
+         🧀 2 cdas de queso cottage bajo en sal + 1 fruta pequeña</p>
+    </div>
+  </div>
+</div>
+
+<!-- ALIMENTOS OK -->
+<div id="alimentos" class="content">
+  <div class="card">
+    <h2>💪 Proteínas recomendadas</h2>
+    <div class="food-grid">
+      <div class="food-item"><div class="icon">🐟</div><div class="name">Salmón</div><div class="desc">Rico en omega-3</div></div>
+      <div class="food-item"><div class="icon">🍗</div><div class="name">Pollo</div><div class="desc">Pechuga a la plancha</div></div>
+      <div class="food-item"><div class="icon">🥚</div><div class="name">Huevos</div><div class="desc">Proteína completa</div></div>
+      <div class="food-item"><div class="icon">🐟</div><div class="name">Sardinas</div><div class="desc">Omega-3 + zinc</div></div>
+      <div class="food-item"><div class="icon">🫘</div><div class="name">Lentejas</div><div class="desc">Proteína vegetal</div></div>
+      <div class="food-item"><div class="icon">🫘</div><div class="name">Garbanzos</div><div class="desc">Zinc + fibra</div></div>
+      <div class="food-item"><div class="icon">🟡</div><div class="name">Tofu</div><div class="desc">Proteína de soya</div></div>
+      <div class="food-item"><div class="icon">🥩</div><div class="name">Pavo</div><div class="desc">Bajo en grasa</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🌾 Carbohidratos complejos (energía limpia)</h2>
+    <div class="food-grid">
+      <div class="food-item"><div class="icon">🍚</div><div class="name">Arroz integral</div><div class="desc">Energía sostenida</div></div>
+      <div class="food-item"><div class="icon">🌾</div><div class="name">Avena</div><div class="desc">Fibra + B vitaminas</div></div>
+      <div class="food-item"><div class="icon">🟡</div><div class="name">Quinoa</div><div class="desc">Proteína completa</div></div>
+      <div class="food-item"><div class="icon">🍠</div><div class="name">Camote</div><div class="desc">Vitamina A + C</div></div>
+      <div class="food-item"><div class="icon">🍌</div><div class="name">Plátano</div><div class="desc">Potasio + energía</div></div>
+      <div class="food-item"><div class="icon">🍞</div><div class="name">Pan integral</div><div class="desc">Con moderación</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🥑 Grasas antiinflamatorias (muy importantes)</h2>
+    <div class="food-grid">
+      <div class="food-item"><div class="icon">🥑</div><div class="name">Aguacate</div><div class="desc">Omega-9 + E</div></div>
+      <div class="food-item"><div class="icon">🫚</div><div class="name">Aceite oliva</div><div class="desc">Extra virgen</div></div>
+      <div class="food-item"><div class="icon">🌰</div><div class="name">Nueces</div><div class="desc">Mejor fuente omega-3</div></div>
+      <div class="food-item"><div class="icon">🌱</div><div class="name">Semillas chía</div><div class="desc">Omega-3 vegetal</div></div>
+      <div class="food-item"><div class="icon">🌿</div><div class="name">Semillas linaza</div><div class="desc">ALA + fibra</div></div>
+      <div class="food-item"><div class="icon">🥜</div><div class="name">Almendras</div><div class="desc">Vitamina E</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🥦 Verduras antiinflamatorias estrella</h2>
+    <div class="food-grid">
+      <div class="food-item"><div class="icon">🥦</div><div class="name">Brócoli</div><div class="desc">Antioxidante</div></div>
+      <div class="food-item"><div class="icon">🍃</div><div class="name">Espinaca</div><div class="desc">Hierro + magnesio</div></div>
+      <div class="food-item"><div class="icon">🟠</div><div class="name">Zanahoria</div><div class="desc">Betacaroteno</div></div>
+      <div class="food-item"><div class="icon">🧅</div><div class="name">Cebolla morada</div><div class="desc">Quercetina</div></div>
+      <div class="food-item"><div class="icon">🥬</div><div class="name">Kale/Col</div><div class="desc">Vitamina K + C</div></div>
+      <div class="food-item"><div class="icon">🫑</div><div class="name">Pimiento rojo</div><div class="desc">Vitamina C</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🌿 Especias antiinflamatorias clave</h2>
+    <div class="food-grid">
+      <div class="food-item"><div class="icon">🟡</div><div class="name">Cúrcuma</div><div class="desc">Curcumina = potente</div></div>
+      <div class="food-item"><div class="icon">⚫</div><div class="name">Pimienta negra</div><div class="desc">Activa cúrcuma</div></div>
+      <div class="food-item"><div class="icon">🫚</div><div class="name">Jengibre</div><div class="desc">Antiinflamatorio</div></div>
+      <div class="food-item"><div class="icon">🧄</div><div class="name">Ajo</div><div class="desc">Antifúngico natural</div></div>
+    </div>
+    <p style="font-size:0.78rem;color:#6b7280;margin-top:10px;">💡 Úsalos a diario en tus comidas. El ajo y la cúrcuma ayudan especialmente contra Malassezia, el hongo vinculado a la dermatitis seborreica.</p>
+  </div>
+</div>
+
+<!-- EVITAR -->
+<div id="evitar" class="content">
+  <div class="card">
+    <h2>❌ Alimentos que pueden empeorar la dermatitis</h2>
+    <div class="avoid-grid">
+      <div class="avoid-item"><div class="icon">🍬</div><div class="name">Azúcar refinada</div></div>
+      <div class="avoid-item"><div class="icon">🍟</div><div class="name">Frituras</div></div>
+      <div class="avoid-item"><div class="icon">🥛</div><div class="name">Lácteos enteros</div></div>
+      <div class="avoid-item"><div class="icon">🍺</div><div class="name">Alcohol</div></div>
+      <div class="avoid-item"><div class="icon">🌭</div><div class="name">Embutidos</div></div>
+      <div class="avoid-item"><div class="icon">🍕</div><div class="name">Comida ultra-procesada</div></div>
+      <div class="avoid-item"><div class="icon">🥤</div><div class="name">Bebidas azucaradas</div></div>
+      <div class="avoid-item"><div class="icon">🧁</div><div class="name">Bollería industrial</div></div>
+      <div class="avoid-item"><div class="icon">🌽</div><div class="name">Aceites vegetales refinados</div></div>
+      <div class="avoid-item"><div class="icon">🍫</div><div class="name">Chocolate con azúcar</div></div>
+    </div>
+    <div class="tip" style="margin-top:14px;">
+      <strong>⚠️ ¿Por qué estos alimentos?</strong>
+      El azúcar y los procesados aumentan la inflamación sistémica y pueden estimular el crecimiento 
+      del hongo <em>Malassezia</em>, responsable de la dermatitis seborreica. Las grasas trans y aceites 
+      refinados (girasol, maíz en exceso) promueven inflamación que se manifiesta en la piel.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>⚠️ Consumir con moderación</h2>
+    <div class="tip" style="background:#f0fdf4;border-color:#22c55e;color:#14532d;">
+      <strong>🥛 Lácteos:</strong> Si los toleras bien, opta por yogur natural sin azúcar o kéfir 
+      (tienen probióticos que pueden ayudar). Evita leche entera y quesos muy grasos.
+    </div>
+    <div class="tip" style="background:#f0fdf4;border-color:#22c55e;color:#14532d;">
+      <strong>🍞 Gluten:</strong> No es necesario eliminarlo si no tienes sensibilidad, pero reduce 
+      el pan blanco y opta por integral o sin gluten si notas que empeora tus brotes.
+    </div>
+    <div class="tip" style="background:#f0fdf4;border-color:#22c55e;color:#14532d;">
+      <strong>☕ Cafeína:</strong> Con moderación está bien. Evita café con azúcar o bebidas energéticas.
+    </div>
+  </div>
+</div>
+
+<!-- CONSEJOS -->
+<div id="consejos" class="content">
+  <div class="card">
+    <h2>🧴 Nutrientes clave para la dermatitis seborreica</h2>
+    <div class="tip">
+      <strong>🔵 Zinc</strong> — Reduce la proliferación de Malassezia. 
+      Fuentes: semillas de calabaza, garbanzos, carne de res magra, mariscos.
+    </div>
+    <div class="tip">
+      <strong>🟡 Vitamina B2 y B6</strong> — Deficiencias se asocian a brotes. 
+      Fuentes: huevos, nueces, plátano, pollo, arroz integral.
+    </div>
+    <div class="tip">
+      <strong>🟠 Omega-3</strong> — Antiinflamatorio potente para la piel. 
+      Fuentes: salmón, sardinas, nueces, semillas de chía y linaza.
+    </div>
+    <div class="tip">
+      <strong>🟣 Probióticos</strong> — Mejoran la microbiota y pueden reducir brotes. 
+      Fuentes: kéfir, yogur natural, chucrut, kimchi.
+    </div>
+    <div class="tip">
+      <strong>💧 Hidratación</strong> — Bebe 2.5–3 litros de agua/día. 
+      La piel seca agrava la dermatitis. Añade infusiones de manzanilla o té verde.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>💪 Consejos para ganar masa siendo ectomorfo</h2>
+    <div class="tip" style="background:#eff6ff;border-color:#3b82f6;color:#1e3a8a;">
+      <strong>🔢 Come cada 3 horas</strong> — Tu metabolismo rápido quema todo. 
+      5–6 comidas/día es ideal para mantener el superávit calórico sin comer en exceso de una vez.
+    </div>
+    <div class="tip" style="background:#eff6ff;border-color:#3b82f6;color:#1e3a8a;">
+      <strong>🥜 Calorías densas y saludables</strong> — Frutos secos, aguacate, mantequilla de maní natural, 
+      aceite de oliva y semillas son tus aliados: pocas cucharadas = muchas calorías limpias.
+    </div>
+    <div class="tip" style="background:#eff6ff;border-color:#3b82f6;color:#1e3a8a;">
+      <strong>💊 Proteína post-entreno</strong> — Dentro de los 45 minutos tras el gym, 
+      consume proteína + carbohidrato rápido (banana + whey o huevos) para maximizar la síntesis muscular.
+    </div>
+    <div class="tip" style="background:#eff6ff;border-color:#3b82f6;color:#1e3a8a;">
+      <strong>😴 Duerme 8 horas</strong> — El músculo se construye mientras duermes. 
+      El estrés (cortisol) empeora tanto la dermatitis como la ganancia muscular.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🧘 El estrés y la dermatitis</h2>
+    <div class="tip" style="background:#fdf4ff;border-color:#a855f7;color:#4a044e;">
+      <strong>¡Vas por buen camino!</strong> El gym es excelente para reducir el cortisol, 
+      que es uno de los principales desencadenantes de los brotes de dermatitis seborreica. 
+      Combina esto con buena alimentación y tendrás un efecto muy positivo en tu piel.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>⚕️ Aviso importante</h2>
+    <p style="font-size:0.83rem;color:#4a5568;line-height:1.6;">
+      Este plan es orientativo y de referencia general. Para un plan 100% personalizado 
+      según tu peso, altura, nivel de actividad y respuesta a los alimentos, 
+      te recomiendo consultar con un <strong>nutricionista</strong> y también comentar 
+      con tu <strong>dermatólogo</strong> qué alimentos específicos desencadenan tus brotes, 
+      ya que puede variar de persona a persona.
+    </p>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log('SW registrado ✅'))
+      .catch(err => console.log('SW error:', err));
+  });
+}
+</script>
+</body>
+</html>
