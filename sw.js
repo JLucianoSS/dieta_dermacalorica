@@ -1,7 +1,9 @@
 const CACHE_NAME = 'mi-dieta-v1';
 const ASSETS = [
-  './dieta_dermatitis_musculos.html',
-  './manifest.json'
+  '/mi-dieta/',
+  '/mi-dieta/index.html',
+  '/mi-dieta/manifest.json',
+  '/mi-dieta/sw.js'
 ];
 
 // Instalar y cachear archivos
