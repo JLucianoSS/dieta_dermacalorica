@@ -1,9 +1,9 @@
 const CACHE_NAME = 'mi-dieta-v1';
 const ASSETS = [
-  '/mi-dieta/',
-  '/mi-dieta/index.html',
-  '/mi-dieta/manifest.json',
-  '/mi-dieta/sw.js'
+  '/dieta_dermacalorica/',
+  '/dieta_dermacalorica/index.html',
+  '/dieta_dermacalorica/manifest.json',
+  '/dieta_dermacalorica/sw.js'
 ];
 
 // Instalar y cachear archivos
